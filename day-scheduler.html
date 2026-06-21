@@ -492,9 +492,13 @@
       }
     }
 
+    function randomId() {
+      return "id-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+
     function normalizeTask(task) {
       return {
-        id: task.id || crypto.randomUUID(),
+        id: task.id || (typeof crypto === "object" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : randomId()),
         title: task.title.trim(),
         time: task.time,
         notes: task.notes.trim(),
