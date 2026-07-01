@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark" data-accent="default">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Productivity Scheduler Pro</title>
+<meta name="description" content="A glassmorphism daily scheduler with tasks, timers, habits, notes and analytics.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bg-gradient" aria-hidden="true"></div>
+<div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<!-- ============ TOP NAVBAR ============ -->
+<header class="navbar">
+  <div class="navbar__brand">
+    <div class="brand-logo"><i class="fa-solid fa-calendar-check"></i></div>
+    <div class="brand-text">
+      <span class="brand-title">Scheduler<span class="brand-accent">Pro</span></span>
+      <span class="brand-sub">Daily Productivity Suite</span>
+    </div>
+  </div>
+
+  <div class="navbar__clock">
+    <span id="currentDate" class="clock-date"></span>
+    <span id="currentTime" class="clock-time"></span>
+  </div>
+
+  <div class="navbar__actions">
+    <span class="autosave-indicator" title="Auto-save active">
+      <span class="autosave-dot" id="autoSaveDot"></span> Saved
+    </span>
+    <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle dark/light mode" title="Toggle theme">
+      <i class="fa-solid fa-moon" id="themeToggleIcon"></i>
+    </button>
+    <button class="icon-btn" data-nav-target="settings" aria-label="Settings" title="Settings">
+      <i class="fa-solid fa-gear"></i>
+    </button>
+    <button class="icon-btn profile-btn" aria-label="Profile" title="Profile">
+      <i class="fa-solid fa-user"></i>
+    </button>
+  </div>
+</header>
+
+<!-- ============ SECTION NAV ============ -->
+<nav class="tabbar" aria-label="Sections">
+  <button class="navbtn navbtn--active" data-nav-target="dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</button>
+  <button class="navbtn" data-nav-target="scheduler"><i class="fa-solid fa-clock"></i> Scheduler</button>
+  <button class="navbtn" data-nav-target="stats"><i class="fa-solid fa-chart-pie"></i> Statistics</button>
+  <button class="navbtn" data-nav-target="calendar"><i class="fa-solid fa-calendar-days"></i> Calendar</button>
+  <button class="navbtn" data-nav-target="notes"><i class="fa-solid fa-note-sticky"></i> Notes</button>
+  <button class="navbtn" data-nav-target="habits"><i class="fa-solid fa-repeat"></i> Habits</button>
+  <button class="navbtn" data-nav-target="goals"><i class="fa-solid fa-bullseye"></i> Goals</button>
+  <button class="navbtn" data-nav-target="timers"><i class="fa-solid fa-stopwatch"></i> Timers</button>
+  <button class="navbtn" data-nav-target="settings"><i class="fa-solid fa-sliders"></i> Settings</button>
+</nav>
+
+<main class="app-main">
+
+  <!-- ============ DASHBOARD PANEL ============ -->
+  <section id="panel-dashboard" class="panel panel--active">
+    <h1 class="panel-title">Today at a glance</h1>
+
+    <div class="stat-grid">
+      <div class="stat-card stat-card--anim"><i class="fa-solid fa-list-check stat-icon" style="color:#60a5fa"></i><span class="stat-value" id="statTotal">0</span><span class="stat-label">Today's Tasks</span></div>
+      <div class="stat-card stat-card--anim"><i class="fa-solid fa-circle-check stat-icon" style="color:#4ade80"></i><span class="stat-value" id="statCompleted">0</span><span class="stat-label">Completed</span></div>
+      <div class="stat-card stat-card--anim"><i class="fa-solid fa-hourglass-half stat-icon" style="color:#94a3b8"></i><span class="stat-value" id="statPending">0</span><span class="stat-label">Pending</span></div>
+      <div class="stat-card stat-card--anim"><i class="fa-solid fa-circle-xmark stat-icon" style="color:#f87171"></i><span class="stat-value" id="statMissed">0</span><span class="stat-label">Missed</span></div>
+      <div class="stat-card stat-card--anim"><i class="fa-solid fa-spinner stat-icon" style="color:#818cf8"></i><span class="stat-value" id="statInProgress">0</span><span class="stat-label">In Progress</span></div>
+      <div class="stat-card stat-card--anim stat-card--ring">
+        <div class="ring" id="productivityRing" style="--pct:0"><span id="statProductivity">0%</span></div>
+        <span class="stat-label">Productivity</span>
+      </div>
+      <div class="stat-card stat-card--anim"><i class="fa-solid fa-fire stat-icon" style="color:#fb923c"></i><span class="stat-value" id="statStreak">0</span><span class="stat-label">Current Streak</span></div>
+      <div class="stat-card stat-card--anim"><i class="fa-solid fa-brain stat-icon" style="color:#22d3ee"></i><span class="stat-value" id="statFocusTime">0m</span><span class="stat-label">Focus Time</span></div>
+      <div class="stat-card stat-card--anim"><i class="fa-solid fa-mug-hot stat-icon" style="color:#f472b6"></i><span class="stat-value" id="statPomodoro">0</span><span class="stat-label">Pomodoro Count</span></div>
+      <div class="stat-card stat-card--anim"><i class="fa-solid fa-droplet stat-icon" style="color:#38bdf8"></i><span class="stat-value" id="statWater">0/8</span><span class="stat-label">Water Intake</span></div>
+      <div class="stat-card stat-card--anim"><i class="fa-solid fa-bullseye stat-icon" style="color:#a78bfa"></i><span class="stat-value" id="statGoals">0%</span><span class="stat-label">Daily Goal</span></div>
+    </div>
+
+    <div class="dashboard-lower">
+      <div class="glass-card motivation-card">
+        <h2><i class="fa-solid fa-quote-left"></i> Motivation</h2>
+        <p id="quoteText" class="quote-text"></p>
+        <div class="tip-row"><i class="fa-solid fa-lightbulb"></i><span id="tipText"></span></div>
+        <div class="tip-row"><i class="fa-solid fa-code"></i><span id="progTipText"></span></div>
+        <div class="tip-row"><i class="fa-solid fa-network-wired"></i><span id="netTipText"></span></div>
+        <button class="btn btn--ghost" id="newQuoteBtn"><i class="fa-solid fa-shuffle"></i> New quote</button>
+      </div>
+
+      <div class="glass-card water-card">
+        <h2><i class="fa-solid fa-droplet"></i> Water Reminder</h2>
+        <div class="water-widget">
+          <div class="water-glass"><div class="water-fill" id="waterFill"></div></div>
+          <div>
+            <p id="waterCountLabel">0 / 8 glasses</p>
+            <div class="water-btn-row">
+              <button class="btn btn--ghost" id="waterRemoveBtn"><i class="fa-solid fa-minus"></i></button>
+              <button class="btn btn--primary" id="waterAddBtn"><i class="fa-solid fa-plus"></i> Glass</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCHEDULER PANEL ============ -->
+  <section id="panel-scheduler" class="panel">
+    <h1 class="panel-title">24-Hour Timeline</h1>
+
+    <div class="toolbar glass-card">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="taskSearch" placeholder="Search by task, category, priority, status, or time…" aria-label="Search tasks">
+      </div>
+      <select id="taskFilter" aria-label="Filter tasks">
+        <option value="all">All tasks</option>
+        <option value="today">Today's</option>
+        <option value="completed">Completed</option>
+        <option value="pending">Pending</option>
+        <option value="missed">Missed</option>
+        <option value="highPriority">High priority</option>
+        <option value="study">Study</option>
+        <option value="programming">Programming</option>
+        <option value="networking">Networking / CCNA</option>
+      </select>
+      <select id="taskSort" aria-label="Sort tasks">
+        <option value="time">Sort: Time</option>
+        <option value="priority">Sort: Priority</option>
+        <option value="category">Sort: Category</option>
+        <option value="status">Sort: Status</option>
+        <option value="alphabetical">Sort: A–Z</option>
+        <option value="newest">Sort: Newest</option>
+        <option value="oldest">Sort: Oldest</option>
+      </select>
+      <button class="btn btn--ghost" id="collapseAllBtn" title="Collapse or expand all hours"><i class="fa-solid fa-compress"></i></button>
+      <button class="btn btn--ghost" id="exportCsvBtn" title="Export as CSV"><i class="fa-solid fa-file-csv"></i> CSV</button>
+      <button class="btn btn--ghost" id="exportPdfBtn" title="Export as PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+      <button class="btn btn--ghost" id="printBtn" title="Print schedule"><i class="fa-solid fa-print"></i></button>
+      <button class="btn btn--ghost" id="undoBtn" title="Undo last delete"><i class="fa-solid fa-rotate-left"></i> Undo</button>
+    </div>
+
+    <div class="timeline" id="timelineContainer"></div>
+  </section>
+
+  <!-- ============ STATISTICS PANEL ============ -->
+  <section id="panel-stats" class="panel">
+    <h1 class="panel-title">Statistics</h1>
+
+    <div class="stat-grid stat-grid--compact">
+      <div class="stat-card"><span class="stat-value" id="stpTotal">0</span><span class="stat-label">Total Tasks</span></div>
+      <div class="stat-card"><span class="stat-value" id="stpCompleted">0</span><span class="stat-label">Completed</span></div>
+      <div class="stat-card"><span class="stat-value" id="stpPending">0</span><span class="stat-label">Pending</span></div>
+      <div class="stat-card"><span class="stat-value" id="stpMissed">0</span><span class="stat-label">Missed</span></div>
+      <div class="stat-card"><span class="stat-value" id="stpRate">0%</span><span class="stat-label">Completion Rate</span></div>
+      <div class="stat-card"><span class="stat-value" id="stpAvgTime">0 min</span><span class="stat-label">Avg. Completion Time</span></div>
+      <div class="stat-card"><span class="stat-value" id="stpLongestStreak">0</span><span class="stat-label">Longest Streak</span></div>
+      <div class="stat-card"><span class="stat-value" id="stpCurrentStreak">0</span><span class="stat-label">Current Streak</span></div>
+      <div class="stat-card"><span class="stat-value stat-value--small" id="stpBestDay">—</span><span class="stat-label">Best Day</span></div>
+      <div class="stat-card"><span class="stat-value stat-value--small" id="stpWorstDay">—</span><span class="stat-label">Worst Day</span></div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="glass-card chart-card"><h2>Status Breakdown</h2><div class="chart-wrap"><canvas id="statusPieChart"></canvas></div></div>
+      <div class="glass-card chart-card"><h2>Tasks by Category</h2><div class="chart-wrap"><canvas id="categoryBarChart"></canvas></div></div>
+      <div class="glass-card chart-card chart-card--wide"><h2>Hourly Productivity</h2><div class="chart-wrap"><canvas id="hourlyLineChart"></canvas></div></div>
+      <div class="glass-card chart-card chart-card--wide"><h2>Productivity Trend (last 14 days)</h2><div class="chart-wrap"><canvas id="weeklyTrendChart"></canvas></div></div>
+    </div>
+  </section>
+
+  <!-- ============ CALENDAR PANEL ============ -->
+  <section id="panel-calendar" class="panel">
+    <h1 class="panel-title">Calendar</h1>
+    <div class="glass-card calendar-card">
+      <div class="calendar-header">
+        <button class="icon-btn" id="calPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+        <span id="calMonthLabel"></span>
+        <button class="icon-btn" id="calNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+      <div class="mini-calendar" id="miniCalendar"></div>
+      <div class="calendar-legend">
+        <span><i class="legend-dot legend-dot--today"></i> Today</span>
+        <span><i class="legend-dot legend-dot--high"></i> High productivity (80%+)</span>
+        <span><i class="legend-dot legend-dot--mid"></i> Some progress</span>
+        <span><i class="legend-dot legend-dot--missed"></i> Missed / low</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NOTES PANEL ============ -->
+  <section id="panel-notes" class="panel">
+    <h1 class="panel-title">Sticky Notes</h1>
+    <div class="glass-card">
+      <form id="noteForm" class="inline-form">
+        <input type="text" id="noteInput" placeholder="Write a quick note…" aria-label="New note">
+        <button class="btn btn--primary" type="submit"><i class="fa-solid fa-plus"></i> Add note</button>
+      </form>
+      <div class="search-box search-box--full">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="noteSearch" placeholder="Search notes…" aria-label="Search notes">
+      </div>
+    </div>
+    <div class="note-grid" id="noteList"></div>
+  </section>
+
+  <!-- ============ HABITS PANEL ============ -->
+  <section id="panel-habits" class="panel">
+    <h1 class="panel-title">Habit Tracker</h1>
+    <div class="glass-card">
+      <form id="habitForm" class="inline-form">
+        <input type="text" id="habitInput" placeholder="Add a custom habit…" aria-label="New habit">
+        <button class="btn btn--primary" type="submit"><i class="fa-solid fa-plus"></i> Add habit</button>
+      </form>
+    </div>
+    <ul class="habit-list glass-card" id="habitList"></ul>
+  </section>
+
+  <!-- ============ GOALS PANEL ============ -->
+  <section id="panel-goals" class="panel">
+    <h1 class="panel-title">Daily Goals</h1>
+    <div class="glass-card">
+      <form id="goalForm" class="inline-form">
+        <input type="text" id="goalInput" placeholder="e.g. Finish CCNA Chapter 3" aria-label="New goal">
+        <button class="btn btn--primary" type="submit"><i class="fa-solid fa-plus"></i> Add goal</button>
+      </form>
+      <div class="progress-bar-track"><div class="progress-bar-fill" id="goalProgressBar"></div></div>
+      <span id="goalProgressLabel" class="progress-bar-label">0% complete</span>
+    </div>
+    <ul class="goal-list glass-card" id="goalList"></ul>
+  </section>
+
+  <!-- ============ TIMERS PANEL ============ -->
+  <section id="panel-timers" class="panel">
+    <h1 class="panel-title">Focus Timers</h1>
+    <div class="timers-grid">
+
+      <div class="glass-card timer-card">
+        <h2><i class="fa-solid fa-mug-hot"></i> Pomodoro</h2>
+        <div class="ring ring--big" id="pomodoroRing" style="--pct:0">
+          <span id="pomodoroTime">25:00</span>
+          <small id="pomodoroMode">Focus</small>
+        </div>
+        <div class="timer-btn-row">
+          <button class="btn btn--primary" id="pomodoroStartBtn"><i class="fa-solid fa-play"></i> Start</button>
+          <button class="btn btn--ghost" id="pomodoroPauseBtn"><i class="fa-solid fa-pause"></i> Pause</button>
+          <button class="btn btn--ghost" id="pomodoroResetBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </div>
+      </div>
+
+      <div class="glass-card timer-card">
+        <h2><i class="fa-solid fa-stopwatch"></i> Stopwatch</h2>
+        <div class="stopwatch-display" id="stopwatchTime">00:00</div>
+        <div class="timer-btn-row">
+          <button class="btn btn--primary" id="stopwatchStartBtn"><i class="fa-solid fa-play"></i> Start</button>
+          <button class="btn btn--ghost" id="stopwatchPauseBtn"><i class="fa-solid fa-pause"></i> Pause</button>
+          <button class="btn btn--ghost" id="stopwatchResetBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+          <button class="btn btn--ghost" id="stopwatchLapBtn"><i class="fa-solid fa-flag"></i> Lap</button>
+        </div>
+        <ul class="lap-list" id="stopwatchLaps"></ul>
+      </div>
+
+      <div class="glass-card timer-card">
+        <h2><i class="fa-solid fa-hourglass"></i> Countdown</h2>
+        <div class="stopwatch-display" id="countdownTime">00:00</div>
+        <small id="countdownLabel"></small>
+        <div class="timer-btn-row">
+          <input type="number" id="countdownMinutes" value="5" min="1" max="180" class="countdown-input" aria-label="Minutes">
+          <button class="btn btn--primary" id="countdownStartBtn"><i class="fa-solid fa-play"></i> Start</button>
+          <button class="btn btn--ghost" id="countdownPauseBtn"><i class="fa-solid fa-pause"></i> Pause</button>
+          <button class="btn btn--ghost" id="countdownResetBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ SETTINGS PANEL ============ -->
+  <section id="panel-settings" class="panel">
+    <h1 class="panel-title">Settings</h1>
+
+    <div class="settings-grid">
+      <div class="glass-card">
+        <h2><i class="fa-solid fa-palette"></i> Appearance</h2>
+        <p class="settings-hint">Choose an accent, then use the moon/sun icon in the navbar for dark or light mode.</p>
+        <div class="accent-row">
+          <button class="accent-swatch" data-accent="default" style="background:#60a5fa" title="Default"></button>
+          <button class="accent-swatch" data-accent="blue" style="background:#3b82f6" title="Blue"></button>
+          <button class="accent-swatch" data-accent="purple" style="background:#a855f7" title="Purple"></button>
+          <button class="accent-swatch" data-accent="green" style="background:#22c55e" title="Green"></button>
+          <button class="accent-swatch" data-accent="orange" style="background:#f97316" title="Orange"></button>
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <h2><i class="fa-solid fa-bell"></i> Reminders & Sound</h2>
+        <label class="settings-row"><span>Enable sound alerts</span><input type="checkbox" id="soundToggle"></label>
+        <label class="settings-row"><span>Volume</span><input type="range" id="volumeSlider" min="0" max="100"></label>
+        <label class="settings-row"><span>Hourly water reminders</span><input type="checkbox" id="waterReminderToggle"></label>
+        <button class="btn btn--ghost" id="enableNotificationsBtn"><i class="fa-solid fa-bell"></i> Enable browser notifications</button>
+      </div>
+
+      <div class="glass-card">
+        <h2><i class="fa-solid fa-database"></i> Data</h2>
+        <button class="btn btn--ghost" id="backupBtn"><i class="fa-solid fa-download"></i> Backup data (.json)</button>
+        <label class="btn btn--ghost file-btn">
+          <i class="fa-solid fa-upload"></i> Restore backup
+          <input type="file" id="restoreInput" accept="application/json" hidden>
+        </label>
+        <button class="btn btn--ghost" id="fullscreenBtn"><i class="fa-solid fa-expand"></i> Toggle fullscreen</button>
+        <button class="btn btn--danger" id="resetAppBtn"><i class="fa-solid fa-triangle-exclamation"></i> Reset app data</button>
+      </div>
+
+      <div class="glass-card">
+        <h2><i class="fa-solid fa-keyboard"></i> Keyboard Shortcuts</h2>
+        <ul class="shortcut-list">
+          <li><kbd>Ctrl</kbd>+<kbd>N</kbd> New task</li>
+          <li><kbd>Ctrl</kbd>+<kbd>S</kbd> Save (auto)</li>
+          <li><kbd>Delete</kbd> Remove selected task</li>
+          <li><kbd>Space</kbd> Complete selected task</li>
+          <li><kbd>Esc</kbd> Close modal</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ REMINDER MODAL ============ -->
+<div class="modal" id="reminderModal" role="dialog" aria-modal="true" aria-labelledby="reminderTitle">
+  <div class="modal__panel modal__panel--reminder">
+    <div class="reminder-icon"><i class="fa-solid fa-bell"></i></div>
+    <h2 class="reminder-title" id="reminderTitle"></h2>
+    <p class="reminder-body"></p>
+    <div class="reminder-actions">
+      <button class="btn btn--ghost" data-reminder-action="snooze5">Snooze 5m</button>
+      <button class="btn btn--ghost" data-reminder-action="snooze10">Snooze 10m</button>
+      <button class="btn btn--ghost" data-reminder-action="dismiss">Dismiss</button>
+      <button class="btn btn--primary" data-reminder-action="complete"><i class="fa-solid fa-check"></i> Complete</button>
+      <button class="btn btn--primary" data-reminder-action="startTimer"><i class="fa-solid fa-stopwatch"></i> Start timer</button>
+    </div>
+    <button class="modal__close" data-close-modal aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="storage.js"></script>
+<script src="theme.js"></script>
+<script src="script.js"></script>
+<script src="notification.js"></script>
+<script src="scheduler.js"></script>
+<script src="dashboard.js"></script>
+<script src="charts.js"></script>
+</body>
+</html>
