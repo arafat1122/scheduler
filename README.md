@@ -90,3 +90,6 @@ a real recorded alarm, drop an `alarm.mp3` into `sounds/` and swap the
   in-page reminder modal still fires every time.
 - `backdrop-filter` (the frosted-glass blur) needs a reasonably modern
   browser — Chrome, Edge, Safari, and Firefox 103+ all support it.
+
+  ---
+  Live Demo Link- https://arafat1122.github.io/scheduler/
